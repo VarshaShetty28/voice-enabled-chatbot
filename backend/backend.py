@@ -1,4 +1,6 @@
 #backend.py
+from dotenv import load_dotenv
+load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,5 +44,7 @@ def chat_endpoint(request: RequestState):
     return {"response": response}
 
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=9999)
+    port = int(os.environ.get("PORT", 9999))  # Use production PORT or default to 9999
+    uvicorn.run(app, host="0.0.0.0", port=port)
