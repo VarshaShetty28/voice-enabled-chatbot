@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-from backend.ai_agent import get_response_from_ai_agent
+from .ai_agent import get_response_from_ai_agent
+
 
 class RequestState(BaseModel):
     model_name: str
