@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon AI Voice Chatbot</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .main-container {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00f7ff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px #00f7ff;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #ccc;
+      margin-bottom: 30px;
+    }
+    
+    .config-panel {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+    }
+    
+    .config-title {
+      color: #00f7ff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #00f7ff;
+      font-weight: bold;
+    }
+    
+    .form-group textarea,
+    .form-group select,
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 14px;
+      resize: vertical;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+    }
+    
+    .form-group textarea:focus,
+    .form-group select:focus,
+    .form-group input[type="text"]:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+      border-color: #00f7ff;
+    }
+    
+    .form-group textarea::placeholder,
+    .form-group input[type="text"]::placeholder {
+      color: #aaa;
+    }
+    
+    .provider-options {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .radio-group input[type="radio"] {
+      accent-color: #00f7ff;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      accent-color: #00f7ff;
+      transform: scale(1.2);
+    }
+    
+    .button-row {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: #00f7ff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 247, 255, 0.5);
+    }
+    
+    .btn-primary:hover {
+      background: #00d4e0;
+      box-shadow: 0 0 25px rgba(0, 247, 255, 0.8);
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #ff00ff;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+    }
+    
+    .btn-secondary:hover {
+      background: #e600e6;
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+      transform: translateY(-2px);
+    }
+    
+    .btn-danger {
+      background: #ff4444;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+    }
+    
+    .btn-danger:hover {
+      background: #ff2222;
+      box-shadow: 0 0 25px rgba(255, 68, 68, 0.8);
+      transform: translateY(-2px);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .voice-status {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff4444;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .voice-status.listening {
+      background: rgba(255, 255, 0, 0.2);
+      border-color: #ffff00;
+      animation: pulse 2s infinite;
+    }
+    
+    .voice-status.speaking {
+      background: rgba(0, 255, 0, 0.2);
+      border-color: #00ff00;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.8); }
+      100% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.5); }
+    }
+    
+    .conversation-history {
+      max-height: 200px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+    }
+    
+    .history-item {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .history-item.user {
+      background: rgba(0, 247, 255, 0.15);
+    }
+    
+    .history-item.bot {
+      background: rgba(255, 0, 255, 0.15);
+    }
+    
+    .response-display {
+      background: rgba(255, 0, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      margin-top: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .response-display h1, .response-display h2, .response-display h3 {
+      color: #00f7ff;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    
+    .response-display p {
+      margin-bottom: 12px;
+    }
+    
+    .response-display ul, .response-display ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+    
+    .response-display li {
+      margin-bottom: 6px;
+    }
+    
+    .response-display code {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .response-display pre {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    
+    .response-display strong {
+      color: #00f7ff;
+      font-weight: bold;
+    }
+    
+    .loading {
+      text-align: center;
+      color: #00f7ff;
+      font-style: italic;
+      margin: 10px 0;
+    }
+    
+    .error {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff4444;
+      border-radius: 8px;
+      padding: 10px;
+      color: #ff6666;
+      margin: 10px 0;
+    }
+    
+    .success {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid #00ff00;
+      border-radius: 8px;
+      padding: 10px;
+      color: #66ff66;
+      margin: 10px 0;
+    }
+    
+    .instructions {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 15px;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .instructions h3 {
+      color: #00f7ff;
+      margin-top: 0;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 0 10px;
+      }
+      
+      .provider-options {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .button-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <h1 class="title">🤖 AI Chatbot Agents</h1>
+    
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+      <h3 class="config-title">⚙️ Agent Configuration</h3>
+      
+      <div class="form-group">
+        <label for="systemPrompt">Define your AI Agent:</label>
+        <textarea id="systemPrompt" rows="3" placeholder="Type your system prompt here..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Select Provider:</label>
+        <div class="provider-options">
+          <div class="radio-group">
+            <input type="radio" id="groq" name="provider" value="Groq" checked>
+            <label for="groq">Groq</label>
+          </div>
+          <div class="radio-group">
+            <input type="radio" id="openai" name="provider" value="OpenAI">
+            <label for="openai">OpenAI</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="modelSelect">Select Model:</label>
+        <select id="modelSelect">
+          <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+          <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+        </select>
+      </div>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="webSearch">
+        <label for="webSearch">Allow Web Search</label>
+      </div>
+      
+      <div class="form-group">
+        <label for="userQuery">Enter your query:</label>
+        <textarea id="userQuery" rows="4" placeholder="Ask Anything!"></textarea>
+      </div>
+      
+      <div class="button-row">
+        <button class="btn btn-primary" id="askAgent">
+          💬 Ask Agent!
+        </button>
+        <button class="btn btn-secondary" id="talkToAgent">
+          🎤 Talk to Agent
+        </button>
+      </div>
+      
+      <!-- Response Display -->
+      <div id="responseContainer" class="hidden">
+        <h3 class="config-title">🤖 Agent Response</h3>
+        <div id="responseDisplay" class="response-display"></div>
+      </div>
+    </div>
+    
+    <!-- Voice Interface -->
+    <div id="voiceInterface" class="config-panel hidden">
+      <h3 class="config-title">🎙️ Voice Conversation Active</h3>
+      
+      <div class="voice-status" id="voiceStatus">
+        🔴 <strong>LIVE VOICE SESSION</strong><br>
+        Status: Connected to your AI Agent
+      </div>
+      
+      <div class="conversation-history" id="conversationHistory">
+        <div class="loading">Starting voice session...</div>
+      </div>
+      
+      <div class="button-row">
+        <button class="btn btn-primary" id="speakNow">
+          🎤 SPEAK NOW
+        </button>
+        <button class="btn btn-danger" id="endVoiceCall">
+          🔴 End Voice Call
+        </button>
+      </div>
+      
+      <div class="form-group" style="margin-top: 20px;">
+        <label for="quickText">⌨️ Quick Text Input (Backup):</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="quickText" placeholder="Type if voice isn't working...">
+          <button class="btn btn-secondary" id="sendQuickText" style="flex: none; width: auto;">💬 Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
