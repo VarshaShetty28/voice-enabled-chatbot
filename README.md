@@ -45,6 +45,17 @@ Monica AI is a powerful web-based conversational AI assistant designed to provid
 - Fully browser-based with no heavy software required  
 
 ---
+## Screenshots
+
+### Query Interface
+![Query Interface](SS/image1.png)
+
+### Query Result
+![Chat Result](SS/image2.png)
+
+### Voice Interface
+![Voice Interface](SS/image3.png)
+
 
 ## Technology Stack
 - **Frontend**: JavaScript, HTML5, CSS3  
